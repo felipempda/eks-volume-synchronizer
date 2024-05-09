@@ -1,0 +1,23 @@
+allowVolumeExpansion: true
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  creationTimestamp: "2024-05-02T01:07:34Z"
+  labels:
+    component: storage-class
+    instance: efs
+    managed-by: terraform
+    name: efs-provisioner
+    part-of: storage
+  name: efs
+  resourceVersion: "6992"
+  uid: 37faee80-ff60-4182-a7c4-cf30d248bc84
+parameters:
+  directoryPerms: "700"
+  fileSystemId: fs-0000a0a0a0a099a
+  gid: "1000"
+  provisioningMode: efs-ap
+  uid: "1000"
+provisioner: efs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate

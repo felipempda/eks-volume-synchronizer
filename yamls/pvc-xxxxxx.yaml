@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    hub.jupyter.org/username: xxxxxxx
+    pv.kubernetes.io/bind-completed: "yes"
+    pv.kubernetes.io/bound-by-controller: "yes"
+    volume.beta.kubernetes.io/storage-class: efs
+    volume.beta.kubernetes.io/storage-provisioner: efs.csi.aws.com
+    volume.kubernetes.io/storage-provisioner: efs.csi.aws.com
+  creationTimestamp: "2024-05-07T18:30:16Z"
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    app: jupyterhub
+    chart: jupyterhub-2.0.0
+    component: singleuser-storage
+    heritage: jupyterhub
+    hub.jupyter.org/username: xxxxxxx
+    release: jupyterhub
+  name: claim-xxxxxxx
+  namespace: default
+  resourceVersion: "2135711"
+  uid: e347a4e6-c0ee-4a19-a3fb-5f246df14793
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: efs
+  volumeMode: Filesystem
+  volumeName: pvc-e347a4e6-c0ee-4a19-a3fb-5f246df14793
+status:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 100Gi
+  phase: Bound
