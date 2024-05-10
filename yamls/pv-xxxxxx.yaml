@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/provisioned-by: efs.csi.aws.com
+    volume.kubernetes.io/provisioner-deletion-secret-name: ""
+    volume.kubernetes.io/provisioner-deletion-secret-namespace: ""
+  creationTimestamp: "2024-05-07T18:30:31Z"
+  finalizers:
+  - kubernetes.io/pv-protection
+  name: pvc-e347a4e6-c0ee-4a19-a3fb-5f246df14793
+  resourceVersion: "2135708"
+  uid: 1bbfd45d-bb1d-44d9-914d-f76d1ee4da3e
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 100Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: claim-xxxxxxx
+    namespace: default
+    resourceVersion: "2135409"
+    uid: e347a4e6-c0ee-4a19-a3fb-5f246df14793
+  csi:
+    driver: efs.csi.aws.com
+    volumeAttributes:
+      storage.kubernetes.io/csiProvisionerIdentity: 9999999999-8081-efs.csi.aws.com
+    volumeHandle: fs-0xxxxxxxx9::fsap-04yyyyyyyyyb
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: efs
+  volumeMode: Filesystem
+status:
+  lastPhaseTransitionTime: "2024-05-07T18:30:31Z"
+  phase: Bound
