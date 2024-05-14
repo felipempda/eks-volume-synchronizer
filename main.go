@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -35,6 +36,7 @@ type Opts struct {
 
 var (
 	opts Opts
+	wg   sync.WaitGroup
 )
 
 func main() {
@@ -240,7 +242,8 @@ func rsyncDirs(pvcsSource, pvcsTarget map[string]v1.PersistentVolumeClaim, mount
 	for sourceIndex, sourcePVC := range pvcsSource {
 		targetPVC, ok := pvcsTarget[sourceIndex]
 		if !ok {
-			fail("Couldn't find corresponding pvc on target: "+sourceIndex, errors.New("PVC not found in target"))
+			log("Couldn't find corresponding pvc on target: " + sourceIndex)
+			continue
 		}
 		volumeSource := sourcePVC.Spec.VolumeName
 		volumeTarget := targetPVC.Spec.VolumeName
@@ -250,11 +253,16 @@ func rsyncDirs(pvcsSource, pvcsTarget map[string]v1.PersistentVolumeClaim, mount
 		}
 		dirSource := filepath.Join(mountSource, volumeSource) + string(os.PathSeparator)
 		dirTarget := filepath.Join(mountTarget, volumeTarget) + string(os.PathSeparator)
-		rsyncDir(dirSource, dirTarget, rsyncArgs)
+		wg.Add(1)
+		go rsyncDir(dirSource, dirTarget, rsyncArgs)
 	}
+	log("waiting rsync jobs...")
+	wg.Wait()
 }
 
 func rsyncDir(dirSource, dirTarget, rsyncArgs string) {
+	defer wg.Done()
+	log("rsyncing dir " + dirSource + "...")
 	args := strings.Split(rsyncArgs, " ")
 	args = append(args, dirSource)
 	args = append(args, dirTarget)
@@ -262,6 +270,11 @@ func rsyncDir(dirSource, dirTarget, rsyncArgs string) {
 	fmt.Println(execComand)
 	if !opts.DryRun {
 		err := execComand.Run()
-		fail("Couldn't rsync "+dirSource, err)
+		if err != nil {
+			log("Couldn't rsync " + dirSource)
+			fmt.Println(err)
+		} else {
+			log("Successfully rsync " + dirSource)
+		}
 	}
 }
