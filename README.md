@@ -86,4 +86,33 @@ Once you are satisfied with the output you can remove --dryRun flag to create th
 
 ## Kubernetes permissions
 
-Listing namespaces and creating persistent volume claims.
+Read/write persistent volume claims and read permissions on storage classes:
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: eks-volume-synchronizer
+rules:
+- apiGroups: [""]
+  resources: ["persistentvolumeclaims"]
+  verbs: ["get", "watch", "list", "create"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["storageclasses"]
+  verbs: ["get", "watch", "list"]
+```
+
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: eks-volume-synchronizer
+subjects:
+- kind: Group
+  name: eks-volume-synchronizer
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: eks-volume-synchronizer
+  apiGroup: rbac.authorization.k8s.io
+```
